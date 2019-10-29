@@ -1,0 +1,35 @@
+apiVersion: "apps/v1"
+kind: Deployment
+metadata:
+  namespace: prisma
+  name: mongo
+  labels:
+    component: "db"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: "db"
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        component: "db"
+    spec:
+      containers:
+      - args:
+        image: mongo:latest
+        name: mongo
+        ports:
+        - containerPort: 27017
+        resources: {}
+        imagePullPolicy: Always
+        volumeMounts:
+        - mountPath: /data/db
+          name: db-claim0
+      restartPolicy: Always
+      volumes:
+      - name: db-claim0
+        persistentVolumeClaim:
+          claimName: db-claim0
